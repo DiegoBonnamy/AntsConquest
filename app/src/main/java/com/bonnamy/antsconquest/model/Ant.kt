@@ -8,7 +8,8 @@ data class Ant(
     override val speed: Int,
     val energy: Int,
     val unlocked: Boolean,
-    val type: AntType
+    val type: AntType,
+    val number: Int
 ): Character(health, attack, defense, dodge, speed)
 
 enum class AntType {
