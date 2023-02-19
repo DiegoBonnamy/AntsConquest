@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.bonnamy.antsconquest.ui.uistate.AntUiState
+import com.bonnamy.antsconquest.ui.uistate.GameUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
     private val scope = CoroutineScope(Dispatchers.IO)
 
     // LivesData
+    val gameData = MutableLiveData<GameUiState>()
     val antsData = MutableLiveData<ImmutableList<AntUiState>>()
 
     fun loadData() {

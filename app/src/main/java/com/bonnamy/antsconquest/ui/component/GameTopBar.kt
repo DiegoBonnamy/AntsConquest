@@ -17,7 +17,8 @@ import com.bonnamy.antsconquest.ui.theme.*
 
 @Composable
 fun GameTopBar(
-
+    level: Int,
+    applePercent: Float
 ) {
     Surface(
         modifier = Modifier.height(48.dp),
@@ -42,12 +43,12 @@ fun GameTopBar(
                 LinearProgressIndicator(
                     modifier = Modifier
                         .height(16.dp),
-                    progress = 0.5F,
+                    progress = applePercent,
                     color = Yellow1,
                     backgroundColor = Green4
                 )
                 Text(
-                    text = "50%",
+                    text = (applePercent*100).toString() + "%",
                     textAlign = TextAlign.Center,
                     color = Black
                 )
@@ -56,7 +57,7 @@ fun GameTopBar(
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .fillMaxWidth(),
-                text = "Niv. 1",
+                text = "Niv. $level",
                 color = Black,
                 textAlign = TextAlign.End
             )
@@ -70,7 +71,10 @@ fun GameTopBar(
 @Composable
 fun GameTopBarPreview() {
     AntsConquestTheme {
-        GameTopBar()
+        GameTopBar(
+            level = 1,
+            applePercent = 0.5F
+        )
     }
 }
 

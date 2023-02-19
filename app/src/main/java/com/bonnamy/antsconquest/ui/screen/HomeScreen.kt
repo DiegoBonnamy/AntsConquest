@@ -38,9 +38,11 @@ fun HomeScreen(
 ) {
     val viewModel: HomeViewModel = viewModel()
 
+    val gameData by viewModel.gameData.observeAsState()
     val antsData by viewModel.antsData.observeAsState(persistentListOf())
 
     HomeContent(
+        level = gameData?.level ?: 1,
         ants = antsData,
         antCreatingClick = {
             viewModel.antCreatingClick(it)
@@ -51,6 +53,7 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeContent(
+    level: Int,
     ants: ImmutableList<AntUiState>,
     antCreatingClick: (AntUiState) -> Unit
 ) {
@@ -61,7 +64,10 @@ fun HomeContent(
     BottomSheetScaffold(
         scaffoldState = bottomSheetState,
         topBar = {
-            GameTopBar()
+            GameTopBar(
+                level = level,
+                applePercent = 0.5F // TODO
+            )
         },
         sheetContent = {
             HomeBottomSheetContent(
@@ -210,6 +216,7 @@ fun ResourceRequiredItem(
 fun HomeContentPreview() {
     AntsConquestTheme {
         HomeContent(
+            level = 1,
             ants = listOf(
                 AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", painterResource(id = R.drawable.ant_worker), 5, ResourcesRequiredUiState(10,8,6,0))
             ).toImmutableList(),
