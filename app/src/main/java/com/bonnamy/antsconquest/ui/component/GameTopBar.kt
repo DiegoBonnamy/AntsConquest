@@ -21,7 +21,8 @@ fun GameTopBar(
 ) {
     Surface(
         modifier = Modifier.height(48.dp),
-        color = Green1
+        color = Green1,
+        elevation = 8.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
