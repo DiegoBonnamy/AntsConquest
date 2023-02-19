@@ -15,15 +15,18 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bonnamy.antsconquest.R
 import com.bonnamy.antsconquest.model.AntType
+import com.bonnamy.antsconquest.model.ResourcesRequired
 import com.bonnamy.antsconquest.ui.component.GameButton
 import com.bonnamy.antsconquest.ui.component.GameTopBar
 import com.bonnamy.antsconquest.ui.theme.AntsConquestTheme
 import com.bonnamy.antsconquest.ui.theme.Brown1
 import com.bonnamy.antsconquest.ui.theme.Green4
 import com.bonnamy.antsconquest.ui.uistate.AntUiState
+import com.bonnamy.antsconquest.ui.uistate.ResourcesRequiredUiState
 import com.bonnamy.antsconquest.viewmodel.HomeViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -96,8 +99,11 @@ fun HomeBottomSheetContent(
         items(ants) { ant ->
             AntCreatingItem(
                 antPainter = ant.image,
-                antName = ant.name,
-                antCreatingClick = { antCreatingClick(ant) }
+                antCreatingClick = { antCreatingClick(ant) },
+                appleCount = ant.resourcesRequired.apple,
+                leafCount = ant.resourcesRequired.leaf,
+                mushroomCount = ant.resourcesRequired.mushroom,
+                metalCount = ant.resourcesRequired.metal
             )
         }
     }
@@ -106,8 +112,11 @@ fun HomeBottomSheetContent(
 @Composable
 fun AntCreatingItem(
     antPainter: Painter,
-    antName: String,
-    antCreatingClick: () -> Unit
+    antCreatingClick: () -> Unit,
+    appleCount: Int = 0,
+    leafCount: Int = 0,
+    mushroomCount: Int = 0,
+    metalCount: Int = 0
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -119,14 +128,77 @@ fun AntCreatingItem(
             painter = antPainter,
             contentDescription = null
         )
-        Text(
-            text = antName
+        ResourcesRequiredRow(
+            appleCount = appleCount,
+            leafCount = leafCount,
+            mushroomCount = mushroomCount,
+            metalCount = metalCount
         )
         GameButton(
             onClick = antCreatingClick,
             backgroundColor = Brown1,
             text = "Create",
             textColor = Color.White
+        )
+    }
+}
+
+@Composable
+fun ResourcesRequiredRow(
+    appleCount: Int,
+    leafCount: Int,
+    mushroomCount: Int,
+    metalCount: Int
+) {
+    Row {
+        if(appleCount > 0) {
+            ResourceRequiredItem(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                image = painterResource(id = R.drawable.apple_without_bg),
+                count = appleCount
+            )
+        }
+        if(leafCount > 0) {
+            ResourceRequiredItem(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                image = painterResource(id = R.drawable.leaf_without_bg),
+                count = leafCount
+            )
+        }
+        if(mushroomCount > 0) {
+            ResourceRequiredItem(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                image = painterResource(id = R.drawable.mushroom_without_bg),
+                count = mushroomCount
+            )
+        }
+        if(metalCount > 0) {
+            ResourceRequiredItem(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                image = painterResource(id = R.drawable.metal_without_bg),
+                count = metalCount
+            )
+        }
+    }
+}
+
+@Composable
+fun ResourceRequiredItem(
+    modifier: Modifier = Modifier,
+    image: Painter,
+    count: Int
+) {
+    Row(
+        modifier = modifier
+    ) {
+        Image(
+            modifier = Modifier.height(16.dp),
+            painter = image,
+            contentDescription = null
+        )
+        Text(
+            text = "x$count",
+            fontSize = 11.sp
         )
     }
 }
@@ -139,7 +211,7 @@ fun HomeContentPreview() {
     AntsConquestTheme {
         HomeContent(
             ants = listOf(
-                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", painterResource(id = R.drawable.ant_worker), 5)
+                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", painterResource(id = R.drawable.ant_worker), 5, ResourcesRequiredUiState(10,8,6,0))
             ).toImmutableList(),
             antCreatingClick = {}
         )
@@ -152,7 +224,7 @@ fun HomeBottomSheetContentPreview() {
     AntsConquestTheme {
         HomeBottomSheetContent(
             ants = listOf(
-                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", painterResource(id = R.drawable.ant_worker), 5)
+                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", painterResource(id = R.drawable.ant_worker), 5, ResourcesRequiredUiState(100,100,100,100))
             ).toImmutableList(),
             antCreatingClick = {}
         )
@@ -165,8 +237,31 @@ fun AntCreatingItemPreview() {
     AntsConquestTheme {
         AntCreatingItem(
             antPainter = painterResource(id = R.drawable.ant_worker),
-            antName = "Ouvrière",
             antCreatingClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ResourcesRequiredRowPreview() {
+    AntsConquestTheme {
+        ResourcesRequiredRow(
+            appleCount = 100,
+            leafCount = 100,
+            mushroomCount = 100,
+            metalCount = 100
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ResourceRequiredItemPreview() {
+    AntsConquestTheme {
+        ResourceRequiredItem(
+            image = painterResource(id = R.drawable.apple_without_bg),
+            count = 100
         )
     }
 }
