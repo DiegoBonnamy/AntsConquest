@@ -1,6 +1,5 @@
 package com.bonnamy.antsconquest.ui.uistate
 
-import androidx.compose.ui.graphics.painter.Painter
 import com.bonnamy.antsconquest.model.AntType
 
 data class AntUiState(
@@ -13,7 +12,7 @@ data class AntUiState(
     val unlocked: Boolean,
     val type: AntType,
     val name: String,
-    val image: Painter,
+    val image: Int,
     val number: Int,
     val resourcesRequired: ResourcesRequiredUiState
 )

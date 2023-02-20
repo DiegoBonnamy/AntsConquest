@@ -39,11 +39,11 @@ fun HomeScreen(
     val viewModel: HomeViewModel = viewModel()
 
     val gameData by viewModel.gameData.observeAsState()
-    val antsData by viewModel.antsData.observeAsState(persistentListOf())
+    //val antsData by viewModel.antsData.observeAsState(persistentListOf())
 
     HomeContent(
         level = gameData?.level ?: 1,
-        ants = antsData,
+        ants = gameData?.ants ?: persistentListOf(),
         antCreatingClick = {
             viewModel.antCreatingClick(it)
         },
@@ -108,7 +108,7 @@ fun HomeBottomSheetContent(
     ) {
         items(ants) { ant ->
             AntCreatingItem(
-                antPainter = ant.image,
+                antPainter = painterResource(id = ant.image),
                 antCount = ant.number,
                 antCreatingClick = { antCreatingClick(ant) },
                 appleCount = ant.resourcesRequired.apple,
@@ -243,7 +243,7 @@ fun HomeContentPreview() {
         HomeContent(
             level = 1,
             ants = listOf(
-                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", painterResource(id = R.drawable.ant_worker), 5, ResourcesRequiredUiState(10,8,6,0))
+                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(10,8,6,0))
             ).toImmutableList(),
             antCreatingClick = {},
             applePercent = 0.5F
@@ -257,7 +257,7 @@ fun HomeBottomSheetContentPreview() {
     AntsConquestTheme {
         HomeBottomSheetContent(
             ants = listOf(
-                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", painterResource(id = R.drawable.ant_worker), 5, ResourcesRequiredUiState(100,100,100,100))
+                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(100,100,100,100))
             ).toImmutableList(),
             antCreatingClick = {}
         )
