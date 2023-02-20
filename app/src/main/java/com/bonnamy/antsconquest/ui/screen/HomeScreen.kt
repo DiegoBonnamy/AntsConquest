@@ -108,6 +108,7 @@ fun HomeBottomSheetContent(
         items(ants) { ant ->
             AntCreatingItem(
                 antPainter = ant.image,
+                antCount = ant.number,
                 antCreatingClick = { antCreatingClick(ant) },
                 appleCount = ant.resourcesRequired.apple,
                 leafCount = ant.resourcesRequired.leaf,
@@ -121,6 +122,7 @@ fun HomeBottomSheetContent(
 @Composable
 fun AntCreatingItem(
     antPainter: Painter,
+    antCount: Int,
     antCreatingClick: () -> Unit,
     appleCount: Int = 0,
     leafCount: Int = 0,
@@ -132,10 +134,9 @@ fun AntCreatingItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        Image(
-            modifier = Modifier.height(32.dp),
-            painter = antPainter,
-            contentDescription = null
+        AntImageWithCount(
+            antPainter = antPainter,
+            antCount = antCount
         )
         ResourcesRequiredRow(
             appleCount = appleCount,
@@ -148,6 +149,26 @@ fun AntCreatingItem(
             backgroundColor = Brown1,
             text = "Create",
             textColor = Color.White
+        )
+    }
+}
+
+@Composable
+fun AntImageWithCount(
+    antPainter: Painter,
+    antCount: Int
+) {
+    Row(
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Image(
+            modifier = Modifier.height(32.dp),
+            painter = antPainter,
+            contentDescription = null
+        )
+        Text(
+            text = " x$antCount",
+            fontSize = 12.sp
         )
     }
 }
@@ -248,7 +269,8 @@ fun AntCreatingItemPreview() {
     AntsConquestTheme {
         AntCreatingItem(
             antPainter = painterResource(id = R.drawable.ant_worker),
-            antCreatingClick = {}
+            antCreatingClick = {},
+            antCount = 1000
         )
     }
 }
