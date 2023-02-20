@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,9 +23,7 @@ import com.bonnamy.antsconquest.R
 import com.bonnamy.antsconquest.model.AntType
 import com.bonnamy.antsconquest.ui.component.GameButton
 import com.bonnamy.antsconquest.ui.component.GameTopBar
-import com.bonnamy.antsconquest.ui.theme.AntsConquestTheme
-import com.bonnamy.antsconquest.ui.theme.Brown1
-import com.bonnamy.antsconquest.ui.theme.Green4
+import com.bonnamy.antsconquest.ui.theme.*
 import com.bonnamy.antsconquest.ui.uistate.AntUiState
 import com.bonnamy.antsconquest.ui.uistate.ResourcesRequiredUiState
 import com.bonnamy.antsconquest.viewmodel.HomeViewModel
@@ -103,19 +102,26 @@ fun HomeBottomSheetContent(
     ants: ImmutableList<AntUiState>,
     antCreatingClick: (AntUiState) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier.heightIn(min = 100.dp, max = 500.dp)
+    Surface(
+        color = Green5,
     ) {
-        items(ants) { ant ->
-            AntCreatingItem(
-                antPainter = painterResource(id = ant.image),
-                antCount = ant.number,
-                antCreatingClick = { antCreatingClick(ant) },
-                appleCount = ant.resourcesRequired.apple,
-                leafCount = ant.resourcesRequired.leaf,
-                mushroomCount = ant.resourcesRequired.mushroom,
-                metalCount = ant.resourcesRequired.metal
-            )
+        LazyColumn(
+            modifier = Modifier
+                .heightIn(min = 500.dp)
+                .padding(top = 16.dp, bottom = 48.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(ants) { ant ->
+                AntCreatingItem(
+                    antPainter = painterResource(id = ant.image),
+                    antCount = ant.number,
+                    antCreatingClick = { antCreatingClick(ant) },
+                    appleCount = ant.resourcesRequired.apple,
+                    leafCount = ant.resourcesRequired.leaf,
+                    mushroomCount = ant.resourcesRequired.mushroom,
+                    metalCount = ant.resourcesRequired.metal
+                )
+            }
         }
     }
 }
@@ -131,9 +137,11 @@ fun AntCreatingItem(
     metalCount: Int = 0
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         AntImageWithCount(
             antPainter = antPainter,
@@ -163,13 +171,14 @@ fun AntImageWithCount(
         verticalAlignment = Alignment.Bottom
     ) {
         Image(
-            modifier = Modifier.height(32.dp),
+            modifier = Modifier.height(56.dp),
             painter = antPainter,
             contentDescription = null
         )
         Text(
             text = " x$antCount",
-            fontSize = 12.sp
+            fontSize = 12.sp,
+            color = White
         )
     }
 }
@@ -229,7 +238,8 @@ fun ResourceRequiredItem(
         )
         Text(
             text = "x$count",
-            fontSize = 11.sp
+            fontSize = 11.sp,
+            color = White
         )
     }
 }
