@@ -21,16 +21,19 @@ fun GameTopBar(
     applePercent: Float
 ) {
     Surface(
-        modifier = Modifier.height(48.dp),
+        modifier = Modifier
+            .height(88.dp),
         color = Green1,
-        elevation = 8.dp
+        elevation = 16.dp
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                modifier = Modifier.height(32.dp),
+                modifier = Modifier.height(40.dp),
                 painter = painterResource(id = R.drawable.apple_without_bg),
                 contentDescription = null
             )

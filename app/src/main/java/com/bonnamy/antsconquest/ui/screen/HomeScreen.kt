@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bonnamy.antsconquest.R
 import com.bonnamy.antsconquest.model.AntType
-import com.bonnamy.antsconquest.model.ResourcesRequired
 import com.bonnamy.antsconquest.ui.component.GameButton
 import com.bonnamy.antsconquest.ui.component.GameTopBar
 import com.bonnamy.antsconquest.ui.theme.AntsConquestTheme
@@ -78,9 +77,11 @@ fun HomeContent(
                 antCreatingClick = antCreatingClick
             )
         }
-    ) {
+    ) { padding ->
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             color = Green4
         ) {
             Column(
@@ -88,9 +89,9 @@ fun HomeContent(
             ) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
-                    painter = painterResource(id = R.drawable.anthill),
+                    painter = painterResource(id = R.drawable.app_anthill_background),
                     contentDescription = null,
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.FillWidth
                 )
             }
         }
