@@ -57,9 +57,7 @@ fun HomeContent(
     antCreatingClick: (AntUiState) -> Unit,
     applePercent: Float
 ) {
-    val bottomSheetState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
-    )
+    val bottomSheetState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
         scaffoldState = bottomSheetState,
