@@ -31,7 +31,7 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
             AntUiState(0,0,0,0,0,0,true, 8, AntType.SPECTRALE, "Fourmi Spectrale", R.drawable.ant_spectral, 0, ResourcesRequiredUiState(640,729,512,50)),
         ).toImmutableList(),
         resources = listOf(
-            ResourceUiState("Pomme", ResourceType.APPLE, 0),
+            ResourceUiState("Pomme", ResourceType.APPLE, 10),
             ResourceUiState("Feuille", ResourceType.LEAF, 0),
             ResourceUiState("Champignon", ResourceType.MUSHROOM, 0),
             ResourceUiState("Métal", ResourceType.METAL, 0)
@@ -53,7 +53,9 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
 
     fun antCreatingClick(ant: AntUiState) {
         var game = gameData.value ?: return
+        // Check creation
         if(!canCreateAnt(ant)) return
+        // Add ant
         val index = game.ants.indexOfFirst { it.type == ant.type }
         val antUpdated = game.ants[index].let {
             it.copy(number = it.number + 1)
@@ -61,6 +63,17 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
         val ants = game.ants.toMutableList()
         ants[index] = antUpdated
         game = game.copy(ants = ants.toImmutableList())
+        // Remove resources
+        game = game.copy(resources = game.resources.map {
+            when(it.type) {
+                ResourceType.APPLE -> it.copy(count = it.count - ant.resourcesRequired.apple)
+                ResourceType.LEAF -> it.copy(count = it.count - ant.resourcesRequired.leaf)
+                ResourceType.MUSHROOM -> it.copy(count = it.count - ant.resourcesRequired.mushroom)
+                ResourceType.METAL -> it.copy(count = it.count - ant.resourcesRequired.metal)
+                else -> it
+            }
+        }.toImmutableList())
+        // refresh LiveData
         gameData.postValue(game)
     }
 
