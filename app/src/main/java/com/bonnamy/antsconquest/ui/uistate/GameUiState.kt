@@ -17,6 +17,9 @@ data class GameUiState(
     }
 
     fun appleCount(): Int = resources.firstOrNull { it.type == ResourceType.APPLE }?.count ?: 0
+    fun leafCount(): Int = resources.firstOrNull { it.type == ResourceType.LEAF }?.count ?: 0
+    fun mushroomCount(): Int = resources.firstOrNull { it.type == ResourceType.MUSHROOM }?.count ?: 0
+    fun metalCount(): Int = resources.firstOrNull { it.type == ResourceType.METAL }?.count ?: 0
 
     fun applePercent(): Float = energyCount().toFloat()/appleCount()
 }

@@ -2,6 +2,8 @@ package com.bonnamy.antsconquest.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// Game colors
+
 val Green1 = Color(0xFF9ACD32)
 val Green2 = Color(0xFF7BC143)
 val Green3 = Color(0xFF8FB82D)
@@ -15,7 +17,11 @@ val Yellow2 = Color(0xFFFFA500)
 
 val Blue1 = Color(0xFF0080FF)
 
+// UI elements colors
+
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
 
 val Gray1 = Color(0xFF696969)
+
+val Red1 = Color(0xFFBD4646)

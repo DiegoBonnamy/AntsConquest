@@ -41,7 +41,6 @@ fun HomeScreen(
     val viewModel: HomeViewModel = viewModel()
 
     val gameData by viewModel.gameData.observeAsState()
-    //val antsData by viewModel.antsData.observeAsState(persistentListOf())
 
     HomeContent(
         level = gameData?.level ?: 1,
@@ -49,7 +48,11 @@ fun HomeScreen(
         antCreatingClick = {
             viewModel.antCreatingClick(it)
         },
-        applePercent = gameData?.applePercent() ?: 0F
+        applePercent = gameData?.applePercent() ?: 0F,
+        appleCount = gameData?.appleCount() ?: 0,
+        leafCount = gameData?.leafCount() ?: 0,
+        mushroomCount = gameData?.mushroomCount() ?: 0,
+        metalCount = gameData?.metalCount() ?: 0
     )
 }
 
@@ -59,7 +62,11 @@ fun HomeContent(
     level: Int,
     ants: ImmutableList<AntUiState>,
     antCreatingClick: (AntUiState) -> Unit,
-    applePercent: Float
+    applePercent: Float,
+    appleCount: Int,
+    leafCount: Int,
+    mushroomCount: Int,
+    metalCount: Int
 ) {
     val bottomSheetState = rememberBottomSheetScaffoldState()
 
@@ -75,7 +82,11 @@ fun HomeContent(
             HomeBottomSheetContent(
                 ants = ants,
                 antCreatingClick = antCreatingClick,
-                level = level
+                level = level,
+                appleCount = appleCount,
+                leafCount = leafCount,
+                mushroomCount = mushroomCount,
+                metalCount = metalCount
             )
         },
         sheetPeekHeight = 150.dp,
@@ -105,7 +116,11 @@ fun HomeContent(
 fun HomeBottomSheetContent(
     ants: ImmutableList<AntUiState>,
     antCreatingClick: (AntUiState) -> Unit,
-    level: Int
+    level: Int,
+    appleCount: Int,
+    leafCount: Int,
+    mushroomCount: Int,
+    metalCount: Int
 ) {
     Surface(
         color = Green5,
@@ -125,7 +140,11 @@ fun HomeBottomSheetContent(
                     mushroomCount = ant.resourcesRequired.mushroom,
                     metalCount = ant.resourcesRequired.metal,
                     unlocked = level >= ant.requiredLevel,
-                    requiredLevel = ant.requiredLevel
+                    requiredLevel = ant.requiredLevel,
+                    appleLocked = ant.resourcesRequired.apple > appleCount,
+                    leafLocked = ant.resourcesRequired.leaf > leafCount,
+                    mushroomLocked = ant.resourcesRequired.mushroom > mushroomCount,
+                    metalLocked = ant.resourcesRequired.metal > metalCount
                 )
             }
         }
@@ -142,7 +161,11 @@ fun AntCreatingItem(
     mushroomCount: Int = 0,
     metalCount: Int = 0,
     unlocked: Boolean,
-    requiredLevel: Int
+    requiredLevel: Int,
+    appleLocked: Boolean,
+    leafLocked: Boolean,
+    mushroomLocked: Boolean,
+    metalLocked: Boolean
 ) {
     Row(
         modifier = Modifier
@@ -161,7 +184,11 @@ fun AntCreatingItem(
                 appleCount = appleCount,
                 leafCount = leafCount,
                 mushroomCount = mushroomCount,
-                metalCount = metalCount
+                metalCount = metalCount,
+                appleLocked = appleLocked,
+                leafLocked = leafLocked,
+                mushroomLocked = mushroomLocked,
+                metalLocked = metalLocked
             )
             GameButton(
                 onClick = antCreatingClick,
@@ -171,7 +198,10 @@ fun AntCreatingItem(
             )
         }
         else {
-            Text(text = "Débloquée au niveau $requiredLevel")
+            Text(
+                text = "Débloquée au niveau $requiredLevel",
+                color = White
+            )
             GameButton(
                 onClick = antCreatingClick,
                 backgroundColor = Gray1,
@@ -211,37 +241,45 @@ fun AntImageWithCount(
 @Composable
 fun ResourcesRequiredRow(
     appleCount: Int,
+    appleLocked: Boolean,
     leafCount: Int,
+    leafLocked: Boolean,
     mushroomCount: Int,
-    metalCount: Int
+    mushroomLocked: Boolean,
+    metalCount: Int,
+    metalLocked: Boolean
 ) {
     Row {
         if(appleCount > 0) {
             ResourceRequiredItem(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 image = painterResource(id = R.drawable.apple_without_bg),
-                count = appleCount
+                count = appleCount,
+                locked = appleLocked
             )
         }
         if(leafCount > 0) {
             ResourceRequiredItem(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 image = painterResource(id = R.drawable.leaf_without_bg),
-                count = leafCount
+                count = leafCount,
+                locked = leafLocked
             )
         }
         if(mushroomCount > 0) {
             ResourceRequiredItem(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 image = painterResource(id = R.drawable.mushroom_without_bg),
-                count = mushroomCount
+                count = mushroomCount,
+                locked = mushroomLocked
             )
         }
         if(metalCount > 0) {
             ResourceRequiredItem(
                 modifier = Modifier.padding(horizontal = 4.dp),
                 image = painterResource(id = R.drawable.metal_without_bg),
-                count = metalCount
+                count = metalCount,
+                locked = metalLocked
             )
         }
     }
@@ -251,7 +289,8 @@ fun ResourcesRequiredRow(
 fun ResourceRequiredItem(
     modifier: Modifier = Modifier,
     image: Painter,
-    count: Int
+    count: Int,
+    locked: Boolean
 ) {
     Row(
         modifier = modifier
@@ -264,7 +303,7 @@ fun ResourceRequiredItem(
         Text(
             text = "x$count",
             fontSize = 11.sp,
-            color = White
+            color = if(locked) Red1 else White
         )
     }
 }
@@ -281,7 +320,11 @@ fun HomeContentPreview() {
                 AntUiState(0, 0, 0, 0, 0, 0, true, 0, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(10,8,6,0))
             ).toImmutableList(),
             antCreatingClick = {},
-            applePercent = 0.5F
+            applePercent = 0.5F,
+            appleCount = 100,
+            leafCount = 10,
+            mushroomCount = 1,
+            metalCount = 0
         )
     }
 }
@@ -295,7 +338,11 @@ fun HomeBottomSheetContentPreview() {
                 AntUiState(0, 0, 0, 0, 0, 0, true, 0, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(100,100,100,100))
             ).toImmutableList(),
             antCreatingClick = {},
-            level = 1
+            level = 1,
+            appleCount = 100,
+            leafCount = 10,
+            mushroomCount = 1,
+            metalCount = 0
         )
     }
 }
@@ -309,7 +356,11 @@ fun AntCreatingItemPreview() {
             antCreatingClick = {},
             antCount = 1000,
             unlocked = true,
-            requiredLevel = 0
+            requiredLevel = 0,
+            appleLocked = false,
+            leafLocked = false,
+            mushroomLocked = true,
+            metalLocked = true
         )
     }
 }
@@ -323,7 +374,11 @@ fun AntCreatingItemLockedPreview() {
             antCreatingClick = {},
             antCount = 0,
             unlocked = false,
-            requiredLevel = 1
+            requiredLevel = 2,
+            appleLocked = false,
+            leafLocked = false,
+            mushroomLocked = true,
+            metalLocked = true
         )
     }
 }
@@ -334,9 +389,13 @@ fun ResourcesRequiredRowPreview() {
     AntsConquestTheme {
         ResourcesRequiredRow(
             appleCount = 100,
+            appleLocked = false,
             leafCount = 100,
+            leafLocked = false,
             mushroomCount = 100,
-            metalCount = 100
+            mushroomLocked = true,
+            metalCount = 100,
+            metalLocked = true
         )
     }
 }
@@ -347,7 +406,8 @@ fun ResourceRequiredItemPreview() {
     AntsConquestTheme {
         ResourceRequiredItem(
             image = painterResource(id = R.drawable.apple_without_bg),
-            count = 100
+            count = 100,
+            locked = false
         )
     }
 }

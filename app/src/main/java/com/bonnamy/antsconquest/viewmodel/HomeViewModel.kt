@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.bonnamy.antsconquest.R
 import com.bonnamy.antsconquest.model.AntType
+import com.bonnamy.antsconquest.model.ResourceType
 import com.bonnamy.antsconquest.ui.uistate.AntUiState
 import com.bonnamy.antsconquest.ui.uistate.GameUiState
 import com.bonnamy.antsconquest.ui.uistate.ResourceUiState
@@ -29,7 +30,12 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
             AntUiState(0,0,0,0,0,0,true, 7, AntType.ACIER, "Fourmi d'acier", R.drawable.ant_steel, 0, ResourcesRequiredUiState(320,243,128,10)),
             AntUiState(0,0,0,0,0,0,true, 8, AntType.SPECTRALE, "Fourmi Spectrale", R.drawable.ant_spectral, 0, ResourcesRequiredUiState(640,729,512,50)),
         ).toImmutableList(),
-        resources = listOf<ResourceUiState>().toImmutableList()
+        resources = listOf(
+            ResourceUiState("Pomme", ResourceType.APPLE, 0),
+            ResourceUiState("Feuille", ResourceType.LEAF, 0),
+            ResourceUiState("Champignon", ResourceType.MUSHROOM, 0),
+            ResourceUiState("Métal", ResourceType.METAL, 0)
+        ).toImmutableList()
     )
 
     // LivesData
@@ -46,8 +52,8 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
     }
 
     fun antCreatingClick(ant: AntUiState) {
-        var game = gameData.value
-        if(ant.requiredLevel > (game?.level ?: return)) return
+        var game = gameData.value ?: return
+        if(!canCreateAnt(ant)) return
         val index = game.ants.indexOfFirst { it.type == ant.type }
         val antUpdated = game.ants[index].let {
             it.copy(number = it.number + 1)
@@ -56,5 +62,15 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
         ants[index] = antUpdated
         game = game.copy(ants = ants.toImmutableList())
         gameData.postValue(game)
+    }
+
+    private fun canCreateAnt(ant: AntUiState): Boolean {
+        val game = gameData.value ?: return false
+        if(ant.requiredLevel > game.level) return false
+        if(ant.resourcesRequired.apple > game.appleCount()) return false
+        if(ant.resourcesRequired.leaf > game.leafCount()) return false
+        if(ant.resourcesRequired.mushroom > game.mushroomCount()) return false
+        if(ant.resourcesRequired.metal > game.metalCount()) return false
+        return true
     }
 }
