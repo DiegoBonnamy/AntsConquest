@@ -11,9 +11,13 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,7 +74,8 @@ fun HomeContent(
         sheetContent = {
             HomeBottomSheetContent(
                 ants = ants,
-                antCreatingClick = antCreatingClick
+                antCreatingClick = antCreatingClick,
+                level = level
             )
         }
     ) { padding ->
@@ -97,7 +102,8 @@ fun HomeContent(
 @Composable
 fun HomeBottomSheetContent(
     ants: ImmutableList<AntUiState>,
-    antCreatingClick: (AntUiState) -> Unit
+    antCreatingClick: (AntUiState) -> Unit,
+    level: Int
 ) {
     Surface(
         color = Green5,
@@ -116,7 +122,9 @@ fun HomeBottomSheetContent(
                     appleCount = ant.resourcesRequired.apple,
                     leafCount = ant.resourcesRequired.leaf,
                     mushroomCount = ant.resourcesRequired.mushroom,
-                    metalCount = ant.resourcesRequired.metal
+                    metalCount = ant.resourcesRequired.metal,
+                    unlocked = level >= ant.requiredLevel,
+                    requiredLevel = ant.requiredLevel
                 )
             }
         }
@@ -131,7 +139,9 @@ fun AntCreatingItem(
     appleCount: Int = 0,
     leafCount: Int = 0,
     mushroomCount: Int = 0,
-    metalCount: Int = 0
+    metalCount: Int = 0,
+    unlocked: Boolean,
+    requiredLevel: Int
 ) {
     Row(
         modifier = Modifier
@@ -142,27 +152,43 @@ fun AntCreatingItem(
     ) {
         AntImageWithCount(
             antPainter = antPainter,
-            antCount = antCount
+            antCount = antCount,
+            unlocked = unlocked
         )
-        ResourcesRequiredRow(
-            appleCount = appleCount,
-            leafCount = leafCount,
-            mushroomCount = mushroomCount,
-            metalCount = metalCount
-        )
-        GameButton(
-            onClick = antCreatingClick,
-            backgroundColor = Brown1,
-            text = "Create",
-            textColor = Color.White
-        )
+        if(unlocked) {
+            ResourcesRequiredRow(
+                appleCount = appleCount,
+                leafCount = leafCount,
+                mushroomCount = mushroomCount,
+                metalCount = metalCount
+            )
+            GameButton(
+                onClick = antCreatingClick,
+                backgroundColor = Brown1,
+                text = "Create",
+                textColor = Color.White
+            )
+        }
+        else {
+            Text(text = "Débloquée au niveau $requiredLevel")
+            GameButton(
+                onClick = antCreatingClick,
+                backgroundColor = Gray1,
+            ) {
+                Image(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_lock_24),
+                    contentDescription = null
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun AntImageWithCount(
     antPainter: Painter,
-    antCount: Int
+    antCount: Int,
+    unlocked: Boolean
 ) {
     Row(
         verticalAlignment = Alignment.Bottom
@@ -170,7 +196,8 @@ fun AntImageWithCount(
         Image(
             modifier = Modifier.height(56.dp),
             painter = antPainter,
-            contentDescription = null
+            contentDescription = null,
+            colorFilter = if(unlocked) null else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
         )
         Text(
             text = " x$antCount",
@@ -250,7 +277,7 @@ fun HomeContentPreview() {
         HomeContent(
             level = 1,
             ants = listOf(
-                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(10,8,6,0))
+                AntUiState(0, 0, 0, 0, 0, 0, true, 0, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(10,8,6,0))
             ).toImmutableList(),
             antCreatingClick = {},
             applePercent = 0.5F
@@ -264,9 +291,10 @@ fun HomeBottomSheetContentPreview() {
     AntsConquestTheme {
         HomeBottomSheetContent(
             ants = listOf(
-                AntUiState(0, 0, 0, 0, 0, 0, true, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(100,100,100,100))
+                AntUiState(0, 0, 0, 0, 0, 0, true, 0, AntType.OUVRIERE, "Ouvrière", R.drawable.ant_worker, 5, ResourcesRequiredUiState(100,100,100,100))
             ).toImmutableList(),
-            antCreatingClick = {}
+            antCreatingClick = {},
+            level = 1
         )
     }
 }
@@ -278,7 +306,23 @@ fun AntCreatingItemPreview() {
         AntCreatingItem(
             antPainter = painterResource(id = R.drawable.ant_worker),
             antCreatingClick = {},
-            antCount = 1000
+            antCount = 1000,
+            unlocked = true,
+            requiredLevel = 0
+        )
+    }
+}
+
+@Preview
+@Composable
+fun AntCreatingItemLockedPreview() {
+    AntsConquestTheme {
+        AntCreatingItem(
+            antPainter = painterResource(id = R.drawable.ant_sky_spear),
+            antCreatingClick = {},
+            antCount = 0,
+            unlocked = false,
+            requiredLevel = 1
         )
     }
 }

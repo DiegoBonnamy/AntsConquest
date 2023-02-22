@@ -10,6 +10,7 @@ data class AntUiState(
     val speed: Int,
     val energy: Int,
     val unlocked: Boolean,
+    val requiredLevel: Int,
     val type: AntType,
     val name: String,
     val image: Int,
