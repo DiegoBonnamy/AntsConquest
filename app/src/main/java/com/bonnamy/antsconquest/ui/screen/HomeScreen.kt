@@ -77,7 +77,9 @@ fun HomeContent(
                 antCreatingClick = antCreatingClick,
                 level = level
             )
-        }
+        },
+        sheetPeekHeight = 150.dp,
+        sheetElevation = 8.dp
     ) { padding ->
         Surface(
             modifier = Modifier
@@ -110,7 +112,6 @@ fun HomeBottomSheetContent(
     ) {
         LazyColumn(
             modifier = Modifier
-                .heightIn(min = 500.dp)
                 .padding(top = 16.dp, bottom = 48.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
