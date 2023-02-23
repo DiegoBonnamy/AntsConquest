@@ -37,7 +37,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HomeScreen(
-
+    onBottomBarItemClick: (Int) -> Unit
 ) {
     val viewModel: HomeViewModel = viewModel()
 
@@ -54,9 +54,7 @@ fun HomeScreen(
         leafCount = gameData?.leafCount() ?: 0,
         mushroomCount = gameData?.mushroomCount() ?: 0,
         metalCount = gameData?.metalCount() ?: 0,
-        onBottomBarItemClick = { position ->
-
-        }
+        onBottomBarItemClick = onBottomBarItemClick
     )
 }
 
