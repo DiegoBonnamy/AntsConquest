@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Ants Conquest</string>
     <string name="title_activity_ant_hill">AntHillActivity</string>
+    <string name="title_activity_explore">ExploreActivity</string>
+    <string name="title_activity_attack">AttackActivity</string>
+    <string name="title_activity_wiki">WikiActivity</string>
 </resources>

@@ -6,10 +6,10 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import com.bonnamy.antsconquest.ui.screen.AntHillScreen
+import com.bonnamy.antsconquest.ui.screen.ExploreScreen
 import com.bonnamy.antsconquest.ui.theme.AntsConquestTheme
 
-class AntHillActivity : ComponentActivity() {
+class ExploreActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -21,16 +21,16 @@ class AntHillActivity : ComponentActivity() {
 
         setContent {
             AntsConquestTheme {
-                AntHillScreen(
+                ExploreScreen(
                     onBottomBarItemClick = { position ->
                         when(position) {
-                            // Explore
-                            1 -> {
-                                val intent = Intent(this, ExploreActivity::class.java)
+                            // Explore -> do nothing
+                            1 -> { }
+                            // AntHill
+                            2 -> {
+                                val intent = Intent(this, AntHillActivity::class.java)
                                 this.startActivity(intent)
                             }
-                            // AntHill -> do nothing
-                            2 -> { }
                             // Ants
                             3 -> {
                                 val intent = Intent(this, MainActivity::class.java)

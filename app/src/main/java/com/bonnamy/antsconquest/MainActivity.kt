@@ -25,7 +25,10 @@ class MainActivity : ComponentActivity() {
                     onBottomBarItemClick = { position ->
                         when(position) {
                             // Explore
-                            1 -> {}
+                            1 -> {
+                                val intent = Intent(this, ExploreActivity::class.java)
+                                this.startActivity(intent)
+                            }
                             // AntHill
                             2 -> {
                                 val intent = Intent(this, AntHillActivity::class.java)
@@ -34,9 +37,15 @@ class MainActivity : ComponentActivity() {
                             // Ants -> do nothing
                             3 -> { }
                             // Attack
-                            4 -> {}
+                            4 -> {
+                                val intent = Intent(this, AttackActivity::class.java)
+                                this.startActivity(intent)
+                            }
                             // Wiki
-                            5 -> {}
+                            5 -> {
+                                val intent = Intent(this, WikiActivity::class.java)
+                                this.startActivity(intent)
+                            }
                             // Do nothing
                             else -> {}
                         }

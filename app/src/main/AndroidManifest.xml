@@ -13,6 +13,33 @@
         android:theme="@style/Theme.AntsConquest"
         tools:targetApi="31">
         <activity
+            android:name=".WikiActivity"
+            android:exported="false"
+            android:label="@string/title_activity_wiki"
+            android:theme="@style/Theme.AntsConquest">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".AttackActivity"
+            android:exported="false"
+            android:label="@string/title_activity_attack"
+            android:theme="@style/Theme.AntsConquest">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ExploreActivity"
+            android:exported="false"
+            android:label="@string/title_activity_explore"
+            android:theme="@style/Theme.AntsConquest">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".AntHillActivity"
             android:exported="false"
             android:label="@string/title_activity_ant_hill"

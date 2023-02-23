@@ -6,10 +6,10 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import com.bonnamy.antsconquest.ui.screen.AntHillScreen
+import com.bonnamy.antsconquest.ui.screen.AttackScreen
 import com.bonnamy.antsconquest.ui.theme.AntsConquestTheme
 
-class AntHillActivity : ComponentActivity() {
+class AttackActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -21,7 +21,7 @@ class AntHillActivity : ComponentActivity() {
 
         setContent {
             AntsConquestTheme {
-                AntHillScreen(
+                AttackScreen(
                     onBottomBarItemClick = { position ->
                         when(position) {
                             // Explore
@@ -29,18 +29,18 @@ class AntHillActivity : ComponentActivity() {
                                 val intent = Intent(this, ExploreActivity::class.java)
                                 this.startActivity(intent)
                             }
-                            // AntHill -> do nothing
-                            2 -> { }
+                            // AntHill
+                            2 -> {
+                                val intent = Intent(this, AntHillActivity::class.java)
+                                this.startActivity(intent)
+                            }
                             // Ants
                             3 -> {
                                 val intent = Intent(this, MainActivity::class.java)
                                 this.startActivity(intent)
                             }
-                            // Attack
-                            4 -> {
-                                val intent = Intent(this, AttackActivity::class.java)
-                                this.startActivity(intent)
-                            }
+                            // Attack -> do nothing
+                            4 -> { }
                             // Wiki
                             5 -> {
                                 val intent = Intent(this, WikiActivity::class.java)
