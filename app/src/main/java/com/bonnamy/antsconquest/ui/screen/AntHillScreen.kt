@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,20 +12,22 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bonnamy.antsconquest.R
 import com.bonnamy.antsconquest.model.ResourceType
 import com.bonnamy.antsconquest.ui.component.GameBottomBar
+import com.bonnamy.antsconquest.ui.component.GameButton
 import com.bonnamy.antsconquest.ui.component.GameTopBar
-import com.bonnamy.antsconquest.ui.theme.AntsConquestTheme
-import com.bonnamy.antsconquest.ui.theme.Black
-import com.bonnamy.antsconquest.ui.theme.Green4
-import com.bonnamy.antsconquest.ui.theme.Yellow1
+import com.bonnamy.antsconquest.ui.theme.*
 import com.bonnamy.antsconquest.ui.uistate.ResourceUiState
 import com.bonnamy.antsconquest.viewmodel.HomeViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -42,7 +45,10 @@ fun AntHillScreen(
         level = gameData?.level ?: 1,
         applePercent = gameData?.applePercent() ?: 0F,
         onBottomBarItemClick = onBottomBarItemClick,
-        resources = gameData?.resources ?: persistentListOf()
+        resources = gameData?.resources ?: persistentListOf(),
+        onUpgradeClick = { }, // TODO
+        requiredDirt = 10, // TODO
+        requiredRock = 10 // TODO
     )
 }
 
@@ -51,7 +57,10 @@ fun AntHillContent(
     level: Int,
     applePercent: Float,
     onBottomBarItemClick: (Int) -> Unit,
-    resources: ImmutableList<ResourceUiState>
+    resources: ImmutableList<ResourceUiState>,
+    onUpgradeClick: () -> Unit,
+    requiredDirt: Int,
+    requiredRock: Int
 ) {
     Scaffold(
         topBar = {
@@ -87,7 +96,9 @@ fun AntHillContent(
                     contentScale = ContentScale.FillWidth
                 )
             }
-            Column {
+            Column(
+                verticalArrangement = Arrangement.Bottom
+            ) {
                 LazyColumn {
                     items(resources) { resource ->
                         ResourceItem(
@@ -97,6 +108,16 @@ fun AntHillContent(
                         )
                     }
                 }
+                UpgradeContent(
+                    level = level,
+                    onUpgradeClick = onUpgradeClick,
+                    dirtCount = requiredDirt,
+                    dirtLocked = requiredDirt > (resources.firstOrNull { it.type == ResourceType.DIRT }?.count
+                        ?: 0),
+                    rockCount = requiredRock,
+                    rockLocked = requiredRock > (resources.firstOrNull { it.type == ResourceType.ROCK }?.count
+                        ?: 0)
+                )
             }
         }
     }
@@ -148,9 +169,114 @@ fun ResourceItem(
 
 @Composable
 fun UpgradeContent(
-
+    level: Int,
+    onUpgradeClick: () -> Unit,
+    dirtCount: Int,
+    dirtLocked: Boolean,
+    rockCount: Int,
+    rockLocked: Boolean
 ) {
+    Surface(
+        modifier = Modifier.padding(top = 64.dp),
+        color = Green5,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            LevelUpgradeText(
+                level = level
+            )
+            UpgradeResourcesRequiredRow(
+                dirtCount = dirtCount,
+                dirtLocked = dirtLocked,
+                rockCount = rockCount,
+                rockLocked = rockLocked
+            )
+            GameButton(
+                onClick = onUpgradeClick,
+                backgroundColor = Brown1,
+                text = "Améliorer",
+                textColor = White
+            )
+        }
+    }
+}
 
+@Composable
+fun LevelUpgradeText(
+    level: Int
+) {
+    val nextLevel = level + 1
+    Row {
+        Text(
+            text = "$level",
+            color = White,
+            fontSize = 18.sp
+        )
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_right_alt_24),
+            contentDescription = null
+        )
+        Text(
+            text = "$nextLevel",
+            color = White,
+            fontSize = 18.sp
+        )
+    }
+
+}
+
+@Composable
+fun UpgradeResourcesRequiredRow(
+    dirtCount: Int,
+    dirtLocked: Boolean,
+    rockCount: Int,
+    rockLocked: Boolean
+) {
+    Row {
+        if(dirtCount > 0) {
+            UpgradeResourceRequiredItem(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                image = painterResource(id = R.drawable.dirt_without_bg),
+                count = dirtCount,
+                locked = dirtLocked
+            )
+        }
+        if(rockCount > 0) {
+            UpgradeResourceRequiredItem(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                image = painterResource(id = R.drawable.rock_without_bg),
+                count = rockCount,
+                locked = rockLocked
+            )
+        }
+    }
+}
+
+@Composable
+fun UpgradeResourceRequiredItem(
+    modifier: Modifier = Modifier,
+    image: Painter,
+    count: Int,
+    locked: Boolean
+) {
+    Row(
+        modifier = modifier
+    ) {
+        Image(
+            modifier = Modifier.height(16.dp),
+            painter = image,
+            contentDescription = null
+        )
+        Text(
+            text = "x$count",
+            fontSize = 11.sp,
+            color = if(locked) Red1 else White
+        )
+    }
 }
 
 //region Previews
@@ -165,12 +291,15 @@ fun AntHillContentPreview() {
             onBottomBarItemClick = {},
             resources = persistentListOf(
                 ResourceUiState("Pomme", ResourceType.APPLE, 10, 100, R.drawable.apple_without_bg),
-                ResourceUiState("Terre", ResourceType.DIRT, 0, 100, R.drawable.dirt_without_bg),
+                ResourceUiState("Terre", ResourceType.DIRT, 50, 100, R.drawable.dirt_without_bg),
                 ResourceUiState("Feuille", ResourceType.LEAF, 0, 100, R.drawable.leaf_without_bg),
                 ResourceUiState("Champignon", ResourceType.MUSHROOM, 0, 100, R.drawable.mushroom_without_bg),
                 ResourceUiState("Pierre", ResourceType.ROCK, 0, 100, R.drawable.rock_without_bg),
                 ResourceUiState("Métal", ResourceType.METAL, 0, 100, R.drawable.metal_without_bg)
-            )
+            ),
+            onUpgradeClick = { },
+            requiredDirt = 10,
+            requiredRock = 10
         )
     }
 }
@@ -191,7 +320,14 @@ fun ResourceItemPreview() {
 @Composable
 fun UpgradeContentPreview() {
     AntsConquestTheme {
-        UpgradeContent()
+        UpgradeContent(
+            level = 1,
+            onUpgradeClick = { },
+            dirtCount = 100,
+            dirtLocked = false,
+            rockCount = 50,
+            rockLocked = true
+        )
     }
 }
 
