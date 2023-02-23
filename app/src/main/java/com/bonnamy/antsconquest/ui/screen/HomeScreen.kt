@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bonnamy.antsconquest.R
 import com.bonnamy.antsconquest.model.AntType
+import com.bonnamy.antsconquest.ui.component.GameBottomBar
 import com.bonnamy.antsconquest.ui.component.GameButton
 import com.bonnamy.antsconquest.ui.component.GameTopBar
 import com.bonnamy.antsconquest.ui.theme.*
@@ -52,7 +53,10 @@ fun HomeScreen(
         appleCount = gameData?.appleCount() ?: 0,
         leafCount = gameData?.leafCount() ?: 0,
         mushroomCount = gameData?.mushroomCount() ?: 0,
-        metalCount = gameData?.metalCount() ?: 0
+        metalCount = gameData?.metalCount() ?: 0,
+        onBottomBarItemClick = { position ->
+
+        }
     )
 }
 
@@ -66,47 +70,56 @@ fun HomeContent(
     appleCount: Int,
     leafCount: Int,
     mushroomCount: Int,
-    metalCount: Int
+    metalCount: Int,
+    onBottomBarItemClick: (Int) -> Unit
 ) {
     val bottomSheetState = rememberBottomSheetScaffoldState()
 
-    BottomSheetScaffold(
-        scaffoldState = bottomSheetState,
-        topBar = {
-            GameTopBar(
-                level = level,
-                applePercent = applePercent
+    Scaffold(
+        bottomBar = {
+            GameBottomBar(
+                onItemClick = onBottomBarItemClick
             )
-        },
-        sheetContent = {
-            HomeBottomSheetContent(
-                ants = ants,
-                antCreatingClick = antCreatingClick,
-                level = level,
-                appleCount = appleCount,
-                leafCount = leafCount,
-                mushroomCount = mushroomCount,
-                metalCount = metalCount
-            )
-        },
-        sheetPeekHeight = 150.dp,
-        sheetElevation = 8.dp
-    ) { padding ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            color = Green4
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Top
-            ) {
-                Image(
-                    modifier = Modifier.fillMaxWidth(),
-                    painter = painterResource(id = R.drawable.app_anthill_background),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth
+        }
+    ) {
+        BottomSheetScaffold(
+            scaffoldState = bottomSheetState,
+            topBar = {
+                GameTopBar(
+                    level = level,
+                    applePercent = applePercent
                 )
+            },
+            sheetContent = {
+                HomeBottomSheetContent(
+                    ants = ants,
+                    antCreatingClick = antCreatingClick,
+                    level = level,
+                    appleCount = appleCount,
+                    leafCount = leafCount,
+                    mushroomCount = mushroomCount,
+                    metalCount = metalCount
+                )
+            },
+            sheetPeekHeight = 150.dp,
+            sheetElevation = 8.dp
+        ) { padding ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                color = Green4
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Image(
+                        modifier = Modifier.fillMaxWidth(),
+                        painter = painterResource(id = R.drawable.app_anthill_background),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
             }
         }
     }
@@ -127,7 +140,7 @@ fun HomeBottomSheetContent(
     ) {
         LazyColumn(
             modifier = Modifier
-                .padding(top = 16.dp, bottom = 48.dp),
+                .padding(top = 16.dp, bottom = 112.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(ants) { ant ->
@@ -324,7 +337,8 @@ fun HomeContentPreview() {
             appleCount = 100,
             leafCount = 10,
             mushroomCount = 1,
-            metalCount = 0
+            metalCount = 0,
+            onBottomBarItemClick = {}
         )
     }
 }
