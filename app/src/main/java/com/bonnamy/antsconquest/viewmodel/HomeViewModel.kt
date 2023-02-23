@@ -31,10 +31,12 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
             AntUiState(0,0,0,0,0,0,true, 8, AntType.SPECTRALE, "Fourmi Spectrale", R.drawable.ant_spectral, 0, ResourcesRequiredUiState(640,729,512,50)),
         ).toImmutableList(),
         resources = listOf(
-            ResourceUiState("Pomme", ResourceType.APPLE, 10),
-            ResourceUiState("Feuille", ResourceType.LEAF, 0),
-            ResourceUiState("Champignon", ResourceType.MUSHROOM, 0),
-            ResourceUiState("Métal", ResourceType.METAL, 0)
+            ResourceUiState("Pomme", ResourceType.APPLE, 10, 100, R.drawable.apple_without_bg),
+            ResourceUiState("Terre", ResourceType.DIRT, 0, 100, R.drawable.dirt_without_bg),
+            ResourceUiState("Feuille", ResourceType.LEAF, 0, 100, R.drawable.leaf_without_bg),
+            ResourceUiState("Champignon", ResourceType.MUSHROOM, 0, 100, R.drawable.mushroom_without_bg),
+            ResourceUiState("Pierre", ResourceType.ROCK, 0, 100, R.drawable.rock_without_bg),
+            ResourceUiState("Métal", ResourceType.METAL, 0, 100, R.drawable.metal_without_bg)
         ).toImmutableList()
     )
 
