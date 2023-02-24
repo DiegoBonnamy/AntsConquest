@@ -15,5 +15,6 @@ data class AntUiState(
     val name: String,
     val image: Int,
     val number: Int,
-    val resourcesRequired: ResourcesRequiredUiState
+    val resourcesRequired: ResourcesRequiredUiState,
+    val lore: Int? = null
 )

@@ -21,14 +21,14 @@ class HomeViewModel(app: Application): AndroidViewModel(app) {
     private val game: GameUiState = GameUiState(
         level = 1,
         ants = listOf(
-            AntUiState(0,0,0,0,0,0,true, 0, AntType.OUVRIERE, "Fourmi Ouvrière", R.drawable.ant_worker, 0, ResourcesRequiredUiState(5,0,0,0)),
-            AntUiState(0,0,0,0,0,0,true, 2, AntType.LANCIERE, "Fourmi Lancière des Cieux", R.drawable.ant_sky_spear, 0, ResourcesRequiredUiState(10,0,0,0)),
-            AntUiState(0,0,0,0,0,0,true, 3, AntType.CAVERNES, "Fourmi des cavernes", R.drawable.ant_cave, 0, ResourcesRequiredUiState(20,3,0,0)),
-            AntUiState(0,0,0,0,0,0,true, 4, AntType.FURTIVE, "Lame Furtive", R.drawable.ant_stealth_blade, 0, ResourcesRequiredUiState(40,9,2,0)),
-            AntUiState(0,0,0,0,0,0,true, 5, AntType.CHEVAUCHEUSE, "Fourmi Chevaucheuse de Scarabée", R.drawable.ant_beetle_rider, 0, ResourcesRequiredUiState(80,27,8,0)),
-            AntUiState(0,0,0,0,0,0,true, 6, AntType.ARDENTE, "Fourmi ardente", R.drawable.ant_fiery, 0, ResourcesRequiredUiState(160,81,32,0)),
-            AntUiState(0,0,0,0,0,0,true, 7, AntType.ACIER, "Fourmi d'acier", R.drawable.ant_steel, 0, ResourcesRequiredUiState(320,243,128,10)),
-            AntUiState(0,0,0,0,0,0,true, 8, AntType.SPECTRALE, "Fourmi Spectrale", R.drawable.ant_spectral, 0, ResourcesRequiredUiState(640,729,512,50)),
+            AntUiState(40,20,10,10,20,0,true, 0, AntType.OUVRIERE, "Fourmi Ouvrière", R.drawable.ant_worker, 0, ResourcesRequiredUiState(5,0,0,0), lore = R.string.ant_worker_lore),
+            AntUiState(80,40,25,30,50,30,true, 2, AntType.LANCIERE, "Fourmi Lancière des Cieux", R.drawable.ant_sky_spear, 0, ResourcesRequiredUiState(10,0,0,0), lore = R.string.ant_sky_spear),
+            AntUiState(60,40,30,30,20,40,true, 3, AntType.CAVERNES, "Fourmi des cavernes", R.drawable.ant_cave, 0, ResourcesRequiredUiState(20,3,0,0), lore = R.string.ant_cave),
+            AntUiState(60,60,30,60,90,40,true, 4, AntType.FURTIVE, "Lame Furtive", R.drawable.ant_stealth_blade, 0, ResourcesRequiredUiState(40,9,2,0), lore = R.string.ant_stealth_blade),
+            AntUiState(100,40,70,30,50,50,true, 5, AntType.CHEVAUCHEUSE, "Fourmi Chevaucheuse de Scarabée", R.drawable.ant_beetle_rider, 0, ResourcesRequiredUiState(80,27,8,0), lore = R.string.ant_beetle_rider),
+            AntUiState(80,70,60,60,60,30,true, 6, AntType.ARDENTE, "Fourmi ardente", R.drawable.ant_fiery, 0, ResourcesRequiredUiState(160,81,32,0), lore = R.string.ant_fiery),
+            AntUiState(120,100,90,20,30,80,true, 7, AntType.ACIER, "Fourmi d'acier", R.drawable.ant_steel, 0, ResourcesRequiredUiState(320,243,128,10), lore = R.string.ant_steel),
+            AntUiState(30,80,50,80,80,40,true, 8, AntType.SPECTRALE, "Fourmi Spectrale", R.drawable.ant_spectral, 0, ResourcesRequiredUiState(640,729,512,50), lore = R.string.ant_spectral),
         ).toImmutableList(),
         resources = listOf(
             ResourceUiState("Pomme", ResourceType.APPLE, 10, 100, R.drawable.apple_without_bg),
