@@ -182,7 +182,9 @@ fun UpgradeContent(
         shape = RoundedCornerShape(10.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -196,6 +198,8 @@ fun UpgradeContent(
                 rockLocked = rockLocked
             )
             GameButton(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 onClick = onUpgradeClick,
                 backgroundColor = Brown1,
                 text = "Améliorer",
@@ -210,20 +214,24 @@ fun LevelUpgradeText(
     level: Int
 ) {
     val nextLevel = level + 1
-    Row {
+    Row(
+        modifier = Modifier.padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
-            text = "$level",
+            text = "Niv. $level ",
             color = White,
-            fontSize = 18.sp
+            fontSize = 28.sp
         )
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_right_alt_24),
-            contentDescription = null
+            contentDescription = null,
+            tint = White
         )
         Text(
-            text = "$nextLevel",
+            text = " Niv. $nextLevel",
             color = White,
-            fontSize = 18.sp
+            fontSize = 28.sp
         )
     }
 
@@ -236,7 +244,10 @@ fun UpgradeResourcesRequiredRow(
     rockCount: Int,
     rockLocked: Boolean
 ) {
-    Row {
+    Row(
+        modifier = Modifier.padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         if(dirtCount > 0) {
             UpgradeResourceRequiredItem(
                 modifier = Modifier.padding(horizontal = 4.dp),
@@ -267,13 +278,13 @@ fun UpgradeResourceRequiredItem(
         modifier = modifier
     ) {
         Image(
-            modifier = Modifier.height(16.dp),
+            modifier = Modifier.height(24.dp),
             painter = image,
             contentDescription = null
         )
         Text(
             text = "x$count",
-            fontSize = 11.sp,
+            fontSize = 18.sp,
             color = if(locked) Red1 else White
         )
     }
