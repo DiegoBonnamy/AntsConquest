@@ -1,23 +1,19 @@
 package com.bonnamy.antsconquest.ui.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,14 +24,13 @@ import com.bonnamy.antsconquest.R
 import com.bonnamy.antsconquest.model.AntType
 import com.bonnamy.antsconquest.ui.component.GameBottomBar
 import com.bonnamy.antsconquest.ui.component.GameTopBar
-import com.bonnamy.antsconquest.ui.theme.AntsConquestTheme
-import com.bonnamy.antsconquest.ui.theme.Green3
-import com.bonnamy.antsconquest.ui.theme.Green4
+import com.bonnamy.antsconquest.ui.theme.*
 import com.bonnamy.antsconquest.ui.uistate.AntUiState
 import com.bonnamy.antsconquest.ui.uistate.ResourcesRequiredUiState
 import com.bonnamy.antsconquest.viewmodel.HomeViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.launch
 
 @Composable
 fun WikiScreen(
@@ -53,7 +48,7 @@ fun WikiScreen(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun WikiContent(
     level: Int,
@@ -61,50 +56,84 @@ fun WikiContent(
     onBottomBarItemClick: (Int) -> Unit,
     ants: ImmutableList<AntUiState>
 ) {
-    Scaffold(
-        topBar = {
-            GameTopBar(
-                level = level,
-                applePercent = applePercent
-            )
-        },
-        bottomBar = {
-            GameBottomBar(
-                onItemClick = onBottomBarItemClick
-            )
-        }
-    ) { padding ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            color = Green4
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Top
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    var clickedAnt: AntUiState? by remember { mutableStateOf(null) }
+
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetState,
+        sheetContent = {
+            Surface(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 1.dp)
+                    .verticalScroll(rememberScrollState()),
+                color = Green4
             ) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .blur(
-                            radiusX = 10.dp,
-                            radiusY = 10.dp
-                        ),
-                    painter = painterResource(id = R.drawable.app_anthill_background),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth
-                )
-            }
-            LazyVerticalGrid(
-                cells = GridCells.Fixed(2),
-                contentPadding = PaddingValues(32.dp)
-            ) {
-                items(ants) { ant ->
-                    AntWikiItem(
+                clickedAnt?.let { ant ->
+                    AntWikiContent(
                         antImage = ant.image,
                         antName = ant.name,
-                        onAntClick = {} // TODO
+                        health = ant.health,
+                        attack = ant.attack,
+                        defense = ant.defense,
+                        speed = ant.speed,
+                        dodge = ant.dodgeToString(),
+                        lore = ant.lore ?: 0
                     )
+                }
+            }
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                GameTopBar(
+                    level = level,
+                    applePercent = applePercent
+                )
+            },
+            bottomBar = {
+                GameBottomBar(
+                    onItemClick = onBottomBarItemClick
+                )
+            }
+        ) { padding ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                color = Green4
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .blur(
+                                radiusX = 10.dp,
+                                radiusY = 10.dp
+                            ),
+                        painter = painterResource(id = R.drawable.app_anthill_background),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
+                LazyVerticalGrid(
+                    cells = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(32.dp)
+                ) {
+                    items(ants) { ant ->
+                        AntWikiItem(
+                            antImage = ant.image,
+                            antName = ant.name,
+                            onAntClick = {
+                                clickedAnt = ant
+                                scope.launch {
+                                    bottomSheetState.show()
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -155,6 +184,92 @@ fun AntWikiItem(
     }
 }
 
+@Composable
+fun AntWikiContent(
+    antImage: Int,
+    antName: String,
+    health: Int,
+    attack: Int,
+    defense: Int,
+    speed: Int,
+    dodge: String,
+    lore: Int
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 56.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier
+                .width(150.dp)
+                .padding(top = 16.dp, bottom = 8.dp),
+            painter = painterResource(id = antImage),
+            contentDescription = null
+        )
+        Text(
+            text = antName,
+            fontSize = 18.sp,
+            color = White
+        )
+        AntWikiStats(
+            health = health,
+            attack = attack,
+            defense = defense,
+            speed = speed,
+            dodge = dodge
+        )
+        Text(
+            modifier = Modifier.padding(8.dp),
+            text = stringResource(id = lore),
+            color = White
+        )
+    }
+}
+
+@Composable
+fun AntWikiStats(
+    health: Int,
+    attack: Int,
+    defense: Int,
+    speed: Int,
+    dodge: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        AntWikiStatItem(statName = "Santée", statValue = health.toString())
+        AntWikiStatItem(statName = "Attaque", statValue = attack.toString())
+        AntWikiStatItem(statName = "Défense", statValue = defense.toString())
+        AntWikiStatItem(statName = "Vitesse", statValue = speed.toString())
+        AntWikiStatItem(statName = "Esquive", statValue = dodge)
+    }
+}
+
+@Composable
+fun AntWikiStatItem(
+    statName: String,
+    statValue: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Text(
+            text = "$statName : ",
+            color = White
+        )
+        Text(
+            text = statValue,
+            color = White
+        )
+    }
+}
+
 //region Previews
 
 @Preview
@@ -183,6 +298,37 @@ fun AntWikiPreview() {
             antName = "Fourmi Ouvrière",
             antImage = R.drawable.ant_worker,
             onAntClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ANtWikiContentPreview() {
+    AntsConquestTheme {
+        AntWikiContent(
+            antImage = R.drawable.ant_worker,
+            antName = "Fourmi ouvrière",
+            health = 100,
+            attack = 50,
+            defense = 50,
+            speed = 50,
+            dodge = "Moyenne",
+            lore = R.string.ant_worker_lore
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ANtWikiStatsPreview() {
+    AntsConquestTheme {
+        AntWikiStats(
+            health = 100,
+            attack = 50,
+            defense = 50,
+            speed = 50,
+            dodge = "Moyenne"
         )
     }
 }
